@@ -1,0 +1,38 @@
+{
+  "name": "express-api-passport-local-mongo-session-example",
+  "version": "0.0.1",
+  "main": "server.js",
+  "repository": "https://allardvanderouw@github.com/allardvanderouw/express-api-passport-local-mongo-session-example.git",
+  "author": "Allard van der Ouw <allard.van.der.ouw@oliver-it.nl>",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "rimraf coverage && yarn run lint && yarn run test:report && yarn run test:coverage",
+    "test:coverage": "mkdir -p coverage/all && cp coverage/*/*.json coverage/all && nyc report --temp-directory=coverage/all --reporter html --reporter text && nyc check-coverage --temp-directory=coverage/all",
+    "test:report": "nyc --all --temp-directory=coverage/integration --reporter=text-summary mocha --timeout=10000 --reporter=spec $(find test -name '*.test.js')",
+    "nyc:test": "nyc mocha",
+    "nyc:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "create:user": "node scripts/create-user.js"
+  },
+  "devDependencies": {
+    "codecov": "^3.0.4",
+    "eslint": "^5.1.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "sinon": "^6.1.3",
+    "supertest": "^3.1.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "connect-ensure-authenticated": "^1.0.1",
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "mongodb": "^3.1.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
+  }
+}
