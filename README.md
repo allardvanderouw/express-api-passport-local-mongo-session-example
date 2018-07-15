@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/allardvanderouw/express-api-passport-local-mongo-session-example.svg?branch=master)](https://travis-ci.com/allardvanderouw/express-api-passport-local-mongo-session-example)
 [![codecov](https://codecov.io/gh/allardvanderouw/express-api-passport-local-mongo-session-example/branch/master/graph/badge.svg)](https://codecov.io/gh/allardvanderouw/express-api-passport-local-mongo-session-example)
 
-This example provides a single-file-implementation ([server.js]((./server.js))) of an [Express](https://github.com/expressjs/express) API server with [Passport](https://github.com/jaredhanson/passport) and persistent sessions in [Mongo DB](https://github.com/mongodb/mongo) with [connect-mongo](https://github.com/jdesboeufs/connect-mongo). 
+This example provides a single-file-implementation ([server.js](./server.js)) of an [Express](https://github.com/expressjs/express) API server with [Passport](https://github.com/jaredhanson/passport) and persistent sessions in [Mongo DB](https://github.com/mongodb/mongo) with [connect-mongo](https://github.com/jdesboeufs/connect-mongo). 
 
 I made this example because I could not find an easy full example online. If you are looking for an Example with views and redirecting without persistent sessions, then you are better off with [Jared Hanson's Express 4.x local example](https://github.com/passport/express-4.x-local-example). Or with a combination of that example and this example.
 
