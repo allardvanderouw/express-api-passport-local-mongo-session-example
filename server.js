@@ -66,13 +66,12 @@ const deserializeUser = db => async (userId, done) => {
 const startServer = async ({
   port = process.env.PORT,
   mongoDbUri = process.env.MONGODB_URI,
-  mongoDbName = process.env.MONGODB_NAME,
 } = {}) => {
   const app = express();
 
   // Connect to Mongo DB
   const dbConnection = await MongoClient.connect(mongoDbUri, { useNewUrlParser: true });
-  const db = dbConnection.db(mongoDbName);
+  const db = dbConnection.db();
 
   // Configure app
   app.use(cookieParser()); // cookieParser is used to parse the session cookie

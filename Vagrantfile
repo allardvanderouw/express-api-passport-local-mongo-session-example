@@ -13,8 +13,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", path: "vagrant-manifests/setup.sh", env: {
     "PORT" => PORT,
-    "MONGODB_URI" => "mongodb://localhost:27017/example",
-    "MONGODB_NAME" => "example"
+    "MONGODB_URI" => "mongodb://localhost:27017/example"
   }
 
   config.vm.network "forwarded_port", guest: PORT, host: PORT
