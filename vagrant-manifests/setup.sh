@@ -45,9 +45,7 @@ sudo rm /home/vagrant/.bash_profile
 sudo touch /home/vagrant/.bash_profile
 sudo echo "export PORT=${PORT}" >> /home/vagrant/.bash_profile
 sudo echo "export MONGODB_URI=\"${MONGODB_URI}\"" >> /home/vagrant/.bash_profile
-sudo echo "export MONGODB_NAME=\"${MONGODB_NAME}\"" >> /home/vagrant/.bash_profile
 
 # Initialize database
 export MONGODB_URI=${MONGODB_URI}
-export MONGODB_NAME=${MONGODB_NAME}
 cd /vagrant && rm -rf node_modules/ && yarn install

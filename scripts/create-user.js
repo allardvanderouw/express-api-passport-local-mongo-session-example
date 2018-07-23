@@ -2,11 +2,10 @@ const { MongoClient } = require('mongodb');
 
 const createUser = async ({
   mongoDbUri = process.env.MONGODB_URI,
-  mongoDbName = process.env.MONGODB_NAME,
 } = {}) => {
   // Connect to Mongo DB
   const dbConnection = await MongoClient.connect(mongoDbUri, { useNewUrlParser: true });
-  const db = dbConnection.db(mongoDbName);
+  const db = dbConnection.db();
 
   const user = {
     username: 'bob',
