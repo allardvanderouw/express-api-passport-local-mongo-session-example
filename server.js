@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo')(session);
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const { ensureAuthenticated } = require('connect-ensure-authenticated');
+const { ensureScope } = require('connect-ensure-authorization');
 const LocalStrategy = require('passport-local').Strategy;
 
 // The Passport LocalStrategy is used for username/password authentication.
@@ -122,6 +123,18 @@ const startServer = async ({
   app.get('/api/whoami', (req, res) => {
     res.status(200);
     res.json(req.user);
+  });
+
+  // API which can only be accessed when authorized
+  app.get('/api/todos', ensureScope('todos:read'), (req, res) => {
+    res.status(200);
+    res.json([{
+      text: 'First todo',
+      completed: false,
+    }, {
+      text: 'Second todo',
+      completed: true,
+    }]);
   });
 
   // Logout API

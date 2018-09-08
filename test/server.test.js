@@ -14,15 +14,22 @@ const testUser = {
   password: '12345',
   firstName: 'Bob',
   favoriteNumber: 42,
+  scopes: ['todos:read'],
 };
 
-const login = () => new Promise((resolve, reject) => {
+const unauthorizedTestUserId = new ObjectID('000000000000000000000002');
+const unauthorizedTestUser = {
+  _id: unauthorizedTestUserId,
+  username: 'zed',
+  password: '123456',
+  firstName: 'Zed',
+  favoriteNumber: 99,
+};
+
+const login = ({ username, password }) => new Promise((resolve, reject) => {
   request('http://localhost:3000')
     .post('/api/login')
-    .send({
-      username: testUser.username,
-      password: testUser.password,
-    })
+    .send({ username, password })
     .end((error, response) => {
       if (error) {
         reject(error);
@@ -35,6 +42,19 @@ const login = () => new Promise((resolve, reject) => {
 const whoami = cookie => new Promise((resolve, reject) => {
   request('http://localhost:3000')
     .get('/api/whoami')
+    .set('cookie', cookie)
+    .end((error, response) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(response);
+      }
+    });
+});
+
+const todos = cookie => new Promise((resolve, reject) => {
+  request('http://localhost:3000')
+    .get('/api/todos')
     .set('cookie', cookie)
     .end((error, response) => {
       if (error) {
@@ -69,8 +89,8 @@ describe('Server test', () => {
     db = _db;
     dbConnection = _dbConnection;
 
-    await db.collection('sessions').remove({});
-    await db.collection('users').remove({});
+    await db.collection('sessions').deleteMany({});
+    await db.collection('users').deleteMany({});
   });
 
   after(async () => {
@@ -79,20 +99,20 @@ describe('Server test', () => {
   });
 
   beforeEach(async () => {
-    await db.collection('users').insertOne(testUser);
+    await db.collection('users').insertMany([testUser, unauthorizedTestUser]);
   });
 
   afterEach(async () => {
     sandbox.restore();
 
-    await db.collection('sessions').remove({});
-    await db.collection('users').remove({});
+    await db.collection('sessions').deleteMany({});
+    await db.collection('users').deleteMany({});
   });
 
   it('should successfully login and access a protected route', (done) => {
     let cookie;
 
-    login()
+    login(testUser)
       .then((loginResponse) => {
         assert.equal(loginResponse.status, 200);
         assert.deepStrictEqual(loginResponse.body, { ...testUser, _id: testUserId.toString() });
@@ -105,6 +125,78 @@ describe('Server test', () => {
       .then((whoamiResponse) => {
         assert.equal(whoamiResponse.status, 200);
         assert.deepStrictEqual(whoamiResponse.body, { ...testUser, _id: testUserId.toString() });
+
+        return logout(cookie);
+      })
+      .then((logoutResponse) => {
+        assert.equal(logoutResponse.status, 200);
+        assert.deepStrictEqual(logoutResponse.body, { logout: true });
+
+        done();
+      })
+      .catch((error) => {
+        done(error);
+      });
+  });
+
+  it('should successfully login and access a protected route with authorization', (done) => {
+    let cookie;
+
+    login(testUser)
+      .then((loginResponse) => {
+        assert.equal(loginResponse.status, 200);
+        assert.deepStrictEqual(loginResponse.body, { ...testUser, _id: testUserId.toString() });
+
+        cookie = loginResponse.headers['set-cookie'];
+        assert.notEqual(cookie, undefined);
+
+        return todos(cookie);
+      })
+      .then((todosResponse) => {
+        assert.equal(todosResponse.status, 200);
+        assert.deepStrictEqual(todosResponse.body, [
+          {
+            text: 'First todo',
+            completed: false,
+          },
+          {
+            text: 'Second todo',
+            completed: true,
+          },
+        ]);
+
+        return logout(cookie);
+      })
+      .then((logoutResponse) => {
+        assert.equal(logoutResponse.status, 200);
+        assert.deepStrictEqual(logoutResponse.body, { logout: true });
+
+        done();
+      })
+      .catch((error) => {
+        done(error);
+      });
+  });
+
+  it('should successfully login but fail to access a protected route with authorization', (done) => {
+    let cookie;
+
+    login(unauthorizedTestUser)
+      .then((loginResponse) => {
+        assert.equal(loginResponse.status, 200);
+        assert.deepStrictEqual(loginResponse.body, {
+          ...unauthorizedTestUser,
+          _id: unauthorizedTestUserId.toString(),
+        });
+
+        cookie = loginResponse.headers['set-cookie'];
+        assert.notEqual(cookie, undefined);
+
+        return todos(cookie);
+      })
+      .then((todosResponse) => {
+        assert.equal(todosResponse.status, 403);
+        assert.deepStrictEqual(todosResponse.body, { message: 'Forbidden' });
 
         return logout(cookie);
       })
@@ -163,12 +255,12 @@ describe('Server test', () => {
   it('should throw an error if the user could not login because of a database error', async () => {
     sandbox.stub(db, 'collection').throws(new Error('Database error'));
 
-    const loginResponse = await login();
+    const loginResponse = await login(testUser);
     assert.equal(loginResponse.status, 500);
   });
 
   it('should throw an error if the user could not be deserialized because of a database error', async () => {
-    const loginResponse = await login();
+    const loginResponse = await login(testUser);
     assert.equal(loginResponse.status, 200);
     assert.deepStrictEqual(loginResponse.body, { ...testUser, _id: testUserId.toString() });
 
@@ -182,14 +274,14 @@ describe('Server test', () => {
   });
 
   it('should throw an error if the user could not be found after successful login', async () => {
-    const loginResponse = await login();
+    const loginResponse = await login(testUser);
     assert.equal(loginResponse.status, 200);
     assert.deepStrictEqual(loginResponse.body, { ...testUser, _id: testUserId.toString() });
 
     const cookie = loginResponse.headers['set-cookie'];
 
     // Remove user
-    await db.collection('users').remove({});
+    await db.collection('users').deleteMany({});
 
     const whoamiResponse = await whoami(cookie);
     assert.equal(whoamiResponse.status, 401);

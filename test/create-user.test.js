@@ -17,8 +17,8 @@ describe('Create user test', () => {
     db = dbConnection.db(mongoDbName);
 
     // Clear collections
-    await db.collection('sessions').remove({});
-    await db.collection('users').remove({});
+    await db.collection('sessions').deleteMany({});
+    await db.collection('users').deleteMany({});
   });
 
   after(async () => {

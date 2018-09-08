@@ -12,6 +12,7 @@ const createUser = async ({
     password: '12345',
     firstName: 'Bob',
     favoriteNumber: 42,
+    scopes: 'todos:read',
   };
 
   // Create user

@@ -22,6 +22,7 @@ I hope you find this example useful, if you are missing something please let me 
 | [passport](https://github.com/jaredhanson/passport) | Authentication middleware for Express |
 | [passport-local](https://github.com/jaredhanson/passport-local) | Username/passport authentication strategy for Passport |
 | [connect-ensure-authenticated](https://github.com/allardvanderouw/connect-ensure-authenticated) | Passport authentication middleware for Express |
+| [connect-ensure-authorization](https://github.com/allardvanderouw/connect-ensure-authorization) | User authorization ensuring middleware for Express |
 
 ## Example
 
