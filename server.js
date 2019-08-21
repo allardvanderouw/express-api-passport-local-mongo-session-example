@@ -19,7 +19,7 @@ const LocalStrategy = require('passport-local').Strategy;
 // Error callback: done(new Error('something unexpected happened'))
 // Invalid callback: done(null, false, { message: 'incorrect username/password' })
 // Success callback: done(null, { firstName: 'bob', ...rest })
-const localStrategy = db => new LocalStrategy(async (username, password, done) => {
+const localStrategy = (db) => new LocalStrategy(async (username, password, done) => {
   try {
     const user = await db.collection('users').findOne({ username });
     if (!user) {
@@ -51,7 +51,7 @@ const serializeUser = (user, done) => {
 // serializeUser).
 // The previously stored serialized data should be used to identify and return the user object.
 // The returned value from this function is stored in req.user.
-const deserializeUser = db => async (userId, done) => {
+const deserializeUser = (db) => async (userId, done) => {
   try {
     const user = await db.collection('users').findOne({ _id: new ObjectID(userId) });
     if (!user) {
@@ -71,7 +71,8 @@ const startServer = async ({
   const app = express();
 
   // Connect to Mongo DB
-  const dbConnection = await MongoClient.connect(mongoDbUri, { useNewUrlParser: true });
+  const dbConnectionOptions = { useNewUrlParser: true, useUnifiedTopology: true };
+  const dbConnection = await MongoClient.connect(mongoDbUri, dbConnectionOptions);
   const db = dbConnection.db();
 
   // Configure app
@@ -82,7 +83,7 @@ const startServer = async ({
     secret: 'keyboard cat', // this should be something secret
     resave: true, // extend the session automatically
     saveUninitialized: false, // don't save uninitialized sessions
-    store: new MongoStore({ db }), // save in MongoDB to persist sessions through server restarts
+    store: new MongoStore({ client: dbConnection }), // save in MongoDB to persist sessions
   }));
 
   // Setup passport

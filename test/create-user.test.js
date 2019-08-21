@@ -13,7 +13,8 @@ describe('Create user test', () => {
 
   before(async () => {
     // Connect to Mongo DB
-    dbConnection = await MongoClient.connect(mongoDbUri, { useNewUrlParser: true });
+    const dbConnectionOptions = { useNewUrlParser: true, useUnifiedTopology: true };
+    dbConnection = await MongoClient.connect(mongoDbUri, dbConnectionOptions);
     db = dbConnection.db(mongoDbName);
 
     // Clear collections

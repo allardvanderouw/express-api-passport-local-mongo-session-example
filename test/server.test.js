@@ -39,7 +39,7 @@ const login = ({ username, password }) => new Promise((resolve, reject) => {
     });
 });
 
-const whoami = cookie => new Promise((resolve, reject) => {
+const whoami = (cookie) => new Promise((resolve, reject) => {
   request('http://localhost:3000')
     .get('/api/whoami')
     .set('cookie', cookie)
@@ -52,7 +52,7 @@ const whoami = cookie => new Promise((resolve, reject) => {
     });
 });
 
-const todos = cookie => new Promise((resolve, reject) => {
+const todos = (cookie) => new Promise((resolve, reject) => {
   request('http://localhost:3000')
     .get('/api/todos')
     .set('cookie', cookie)
@@ -65,7 +65,7 @@ const todos = cookie => new Promise((resolve, reject) => {
     });
 });
 
-const logout = cookie => new Promise((resolve, reject) => {
+const logout = (cookie) => new Promise((resolve, reject) => {
   request('http://localhost:3000')
     .post('/api/logout')
     .set('cookie', cookie)
