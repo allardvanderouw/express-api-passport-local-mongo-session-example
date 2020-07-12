@@ -4,7 +4,6 @@
 [![codecov](https://codecov.io/gh/allardvanderouw/express-api-passport-local-mongo-session-example/branch/master/graph/badge.svg)](https://codecov.io/gh/allardvanderouw/express-api-passport-local-mongo-session-example)
 [![dependencies Status](https://david-dm.org/allardvanderouw/express-api-passport-local-mongo-session-example/status.svg)](https://david-dm.org/allardvanderouw/express-api-passport-local-mongo-session-example)
 [![devDependencies Status](https://david-dm.org/allardvanderouw/express-api-passport-local-mongo-session-example/dev-status.svg)](https://david-dm.org/allardvanderouw/express-api-passport-local-mongo-session-example?type=dev)
-[![Greenkeeper badge](https://badges.greenkeeper.io/allardvanderouw/express-api-passport-local-mongo-session-example.svg)](https://greenkeeper.io/)
 
 This example provides a single-file-implementation ([server.js](./server.js)) of an [Express](https://github.com/expressjs/express) API server with [Passport](https://github.com/jaredhanson/passport) and persistent sessions in [Mongo DB](https://github.com/mongodb/mongo) with [connect-mongo](https://github.com/jdesboeufs/connect-mongo). 
 
